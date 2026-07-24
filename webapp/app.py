@@ -1,39 +1,57 @@
 """
-Small web app for interacting with a fine-tuned BERT classifier.
+Web app using FastAPI for interacting with a fine-tuned BERT classifier.
 
 Usage:
     python app.py --model_dir ../bert-finetuned --labels negative,positive
 
-Then open http://localhost:5000 in a browser.
+Then open http://127.0.0.1:5000 in a browser.
 """
 
 import argparse
+import os
+import uvicorn
 import torch
-from flask import Flask, request, jsonify, render_template
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 from transformers import BertTokenizerFast, BertForSequenceClassification
 
-app = Flask(__name__)
+app = FastAPI(title="BERT Text Classifier API")
 
 # Populated in main() before app.run()
 model = None
 tokenizer = None
 device = None
-label_names = None
+label_names = []
 max_length = 256
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+static_dir = os.path.join(BASE_DIR, "static")
+templates_dir = os.path.join(BASE_DIR, "templates")
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+templates = Jinja2Templates(directory=templates_dir)
 
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    data = request.get_json(force=True)
-    text = (data.get("text") or "").strip()
+class PredictRequest(BaseModel):
+    text: str
+
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.post("/predict")
+async def predict(payload: PredictRequest):
+    text = (payload.text or "").strip()
 
     if not text:
-        return jsonify({"error": "Please enter some text."}), 400
+        return JSONResponse(content={"error": "Please enter some text."}, status_code=400)
 
     inputs = tokenizer(
         text,
@@ -59,7 +77,7 @@ def predict():
             for i, p in enumerate(probs)
         ],
     }
-    return jsonify(result)
+    return JSONResponse(content=result)
 
 
 def main():
@@ -83,9 +101,9 @@ def main():
     tokenizer = BertTokenizerFast.from_pretrained(args.model_dir)
     model = BertForSequenceClassification.from_pretrained(args.model_dir).to(device)
     model.eval()
-    print("Model loaded. Starting server...")
+    print(f"Model loaded. Starting FastAPI server on http://{args.host}:{args.port}...")
 
-    app.run(host=args.host, port=args.port, debug=False)
+    uvicorn.run(app, host=args.host, port=args.port, log_level="info")
 
 
 if __name__ == "__main__":

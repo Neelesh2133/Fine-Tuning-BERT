@@ -1,6 +1,6 @@
 # 🚀 Fine-Tuning BERT for Text Classification
 
-An end-to-end, beginner-friendly pipeline to fine-tune `bert-base-uncased` for text classification (sentiment analysis on movie reviews using the IMDB dataset), complete with command-line inference scripts and an interactive Flask web application.
+An end-to-end, beginner-friendly pipeline to fine-tune `bert-base-uncased` for text classification (sentiment analysis on movie reviews using the IMDB dataset), complete with command-line inference scripts and an interactive FastAPI web application.
 
 ---
 
@@ -96,7 +96,7 @@ flowchart LR
 
     subgraph Deployment ["3. Deployment & Inference"]
         B5 --> C1["CLI Predictor (predict.py)"]
-        B5 --> C2["Flask Web Application (webapp/app.py)"]
+        B5 --> C2["FastAPI Web Application (webapp/app.py)"]
     end
 ```
 
@@ -112,7 +112,7 @@ Fine-Tuning-BERT/
 │   ├── tokenizer.json      # Fast tokenizer vocabulary & config
 │   └── vocab.txt           # Subword vocabulary list
 ├── webapp/                 # Interactive Web Application
-│   ├── app.py              # Flask backend server for serving predictions
+│   ├── app.py              # FastAPI + Uvicorn backend server for serving predictions
 │   ├── static/             # Frontend assets
 │   │   ├── script.js       # Asynchronous API fetch call logic
 │   │   └── style.css       # Dark mode CSS stylesheet
@@ -228,7 +228,7 @@ Class probabilities: [0.0312, 0.9688]
 
 ### 3. Running the Web Application
 
-Launch the interactive Flask web application to analyze sentiment via browser UI:
+Launch the interactive FastAPI web application (powered by Uvicorn) to analyze sentiment via browser UI:
 
 1. **Navigate to the webapp directory and start server:**
    ```bash
@@ -237,6 +237,7 @@ Launch the interactive Flask web application to analyze sentiment via browser UI
    ```
 2. **Open browser:**
    Navigate to `http://127.0.0.1:5000` or `http://localhost:5000`.
+   *(Interactive Swagger API docs available at `http://127.0.0.1:5000/docs`)*
 
 ---
 
