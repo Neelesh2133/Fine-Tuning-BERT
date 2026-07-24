@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal &mdash; BERT text classifier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="mark">&#9635;</div>
+    <div class="titles">
+      <h1>Signal</h1>
+      <p class="sub">A fine-tuned BERT reading the room</p>
+    </div>
+  </header>
+
+  <main class="panel">
+    <label class="field-label" for="text-input">Text to classify</label>
+    <textarea id="text-input" rows="5" placeholder="Paste a sentence or a whole review here&hellip;"></textarea>
+
+    <div class="controls">
+      <button id="analyze-btn">Analyze</button>
+      <span id="status" class="status"></span>
+    </div>
+
+    <section id="result" class="result hidden">
+      <div class="readout">
+        <span id="readout-label" class="readout-label">&mdash;</span>
+        <span id="readout-conf" class="readout-conf"></span>
+      </div>
+
+      <div class="meter">
+        <div class="meter-track">
+          <div id="meter-fill" class="meter-fill"></div>
+          <div id="meter-needle" class="meter-needle"></div>
+        </div>
+        <div class="meter-ticks">
+          <span id="tick-left">negative</span>
+          <span id="tick-right">positive</span>
+        </div>
+      </div>
+
+      <div id="prob-bars" class="prob-bars"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Served locally from <code>bert-finetuned/</code> &middot; not connected to the internet</p>
+  </footer>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
