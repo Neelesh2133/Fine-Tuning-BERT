@@ -159,7 +159,7 @@ Fine-Tuning-BERT/
 
 ---
 
-### GPU / CUDA Setup for Windows
+### GPU / CUDA Setup for Windows [NVIDIA]
 
 If `torch.cuda.is_available()` returns `False`, your environment may have installed the CPU-only PyTorch build by default.
 
